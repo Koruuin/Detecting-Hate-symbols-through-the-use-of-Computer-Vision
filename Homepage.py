@@ -1,6 +1,7 @@
 import io
 from PIL import Image
 import streamlit as st
+import numpy as np
 import torch
 from torchvision import transforms
 
@@ -19,8 +20,7 @@ def load_image():
 
 
 def load_model(model_path):
-    model = torch.load(model_path)
-    model.eval()
+    model = torch.load(model_path)['state_dict']
     return model
 
 
@@ -32,24 +32,24 @@ def load_labels(labels_file):
 
 def predict(model, categories, image):
     preprocess = transforms.Compose([
-        transforms.Resize(256),
-        transforms.CenterCrop(224)
+        transforms.Resize(128),
+        transforms.CenterCrop(96)
     ])
-    input_tensor = preprocess(image)
+    st.write('done transforming')
+    input_tensor = torch.Tensor(np.asarray(preprocess(image)))
     input_batch = input_tensor.unsqueeze(0)
-
     with torch.no_grad():
         output = model(input_batch)
 
     probabilities = torch.nn.functional.softmax(output[0], dim=0)
-
+    st.write('done transforming2')
     all_prob, all_catid = torch.topk(probabilities, len(categories))
     for i in range(all_prob.size(0)):
         st.write(categories[all_catid[i]], all_prob[i].item())
 
 
 def main():
-    st.title('Demo')
+    st.title('HS5 Computer Vision Detection')
     model = load_model(MODEL_PATH)
     categories = load_labels(LABELS_PATH)
     image = load_image()
@@ -61,4 +61,5 @@ def main():
 
 if __name__ == '__main__':
     main()
+
 
