@@ -51,7 +51,9 @@ def predict(model, categories, image):
 
 
 def main():
-    st.title('Hs5 Computer Vision')
+    st.title('HS5 Computer Vision Detection')
+    st.caption('This computer vision can only predict and detect 5 hate symbols which are Nazi swastika symbol, Celtic cross symbol, Sonnenrad Symbol, Schutzstaffel Symbol and Islamic State Flag symbol.')
+    st.markdown('the first one to the list is the predicted outcome of the computer vision')
     model = load_model(MODEL_PATH)
     categories = load_labels(LABELS_PATH)
     image = load_image()
